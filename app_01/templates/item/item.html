@@ -1,0 +1,164 @@
+{% extends 'base/base_main.html' %}
+
+{% block content %}
+    {% if pagination.pages > 0 %}
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" style="margin-left:350px">
+                <form action="/" method="post"  >
+                    <div class="modal-content" style="width: 800px">
+
+                        <div class="modal-body">
+                            <table>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>图片</th>
+                                    <th>名称</th>
+                                    <th>价格</th>
+                                    <th>库存</th>
+                                </tr>
+                                <tr>
+                                    <td id="goods_show_id"></td>
+                                    <td><input type="text" id="goods_img" name="img"></td>
+                                    <td><input type="text" id="goods_name" name="name"></td>
+                                    <td><input type="text" id="goods_price" name="price"></td>
+                                    <td><input type="text" id="goods_nums" name="goodsnum"></td>
+                                </tr>
+                            </table>
+                            <input id="goods_id" style="display: none" name="id">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                            <button type="submit" class="btn btn-primary" >提交更改</button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </form>
+            </div><!-- /.modal -->
+        </div>
+
+
+        <div class="container">
+            <div style="align-content: center">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        {% if pagination.has_prev %}
+                            <li>
+                                <a href="#" onclick="change_page({{ pagination.page - 1 }})" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="disabled">
+                                <a href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+
+
+                        {% for item in pagination.iter_pages() %}
+
+                            {% if pagination.page == item %}
+                                <li class="active"><a href="#">{{ item }}</a></li>
+                            {% elif item == None %}
+                                <li><a href="#">...</a></li>
+                            {% else %}
+                                <li><a href="#" onclick="change_page({{ item }})">{{ item }}</a></li>
+                            {% endif %}
+
+                        {% endfor %}
+
+
+
+                        {% if pagination.has_next %}
+                            <li>
+                                <a href="#" onclick="change_page({{ pagination.page + 1 }})" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="disabled">
+                                <a href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                    </ul>
+                </nav>
+            </div>
+            <table class="table">
+                <tr>
+                    <th>ID</th>
+                    <th>图片</th>
+                    <th>名称</th>
+                    <th>价格</th>
+                    <th>库存</th>
+                    <th>操作</th>
+                </tr>
+                {% for item in pagination.items %}
+                    <tr>
+                        <td>{{ item.id }}</td>
+                        <td><img src="{{ item.productimg }}" style="width: 50px;height: 50px"></td>
+                        <td>{{ item.productlongname }}</td>
+                        <td>{{ item.price }}</td>
+                        <td>{{ item.storenums }}</td>
+                        <td>
+                            <input class="btn btn-warning " type="button" value="修改" onclick="filte_data({
+                                    id:'{{ item.id }}',
+                                    productimg:'{{ item.productimg }}',
+                                    productlongname:'{{ item.productlongname }}',
+                                    price:'{{ item.price }}' ,
+                                    storenums:'{{ item.storenums }}'
+                                    })" data-toggle="modal" data-target="#myModal">
+
+                            <input class="btn btn-danger" type="button" value="删除" onclick="delete_data({{ item.id }})">
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block js %}
+    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script>
+        function change_page(nu) {
+            window.open("/?page=" + nu, target = "_self");
+        }
+
+        $("#search_btn").click(function () {
+            var name = $("#search_name").val();
+            window.open("/?name=" + name, target = "_self");
+        });
+
+        function filte_data(item) {
+            $("#goods_show_id").html(item.id);
+            $("#goods_id").val(item.id);
+            $("#goods_img").val(item.productimg);
+            $("#goods_name").val(item.productlongname);
+            $("#goods_price").val(item.price);
+            $("#goods_nums").val(item.storenums);
+        }
+
+
+        function delete_data(id) {
+            $.ajax({
+                url: "/",
+                method: "delete",
+                data: JSON.stringify({"id": id}),
+                success: function (res) {
+                    if (res.code == 0) {
+                        window.open(res.data);
+                    } else {
+                        alert(res.msg);
+                    }
+                }
+            });
+        }
+    </script>
+{% endblock %}
