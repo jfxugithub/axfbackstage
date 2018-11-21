@@ -58,6 +58,7 @@ def item_view():
         goods = Goods.query.get(params.get('id'))
 
         goods.price = params.get('price')
+        goods.productid = params.get('productid')
         goods.productlongname = params.get('name')
         goods.productimg = params.get('img')
         goods.storenums = params.get('goodsnum')
@@ -66,11 +67,6 @@ def item_view():
         db.session.commit()
 
         return redirect(url_for("axfbg.item_view"))
-
-
-
-
-
 
 
 @blue.route('/order_manage')

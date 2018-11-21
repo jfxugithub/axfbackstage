@@ -4,9 +4,9 @@
     {% if pagination.pages > 0 %}
         <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
              aria-hidden="true">
-            <div class="modal-dialog" style="margin-left:350px">
+            <div class="modal-dialog" style="margin-left:260px">
                 <form action="/" method="post"  >
-                    <div class="modal-content" style="width: 800px">
+                    <div class="modal-content" style="width: 1000px">
 
                         <div class="modal-body">
                             <table>
@@ -18,7 +18,7 @@
                                     <th>库存</th>
                                 </tr>
                                 <tr>
-                                    <td id="goods_show_id"></td>
+                                    <td><input type="text" id="goods_show_id" name="productid"></td>
                                     <td><input type="text" id="goods_img" name="img"></td>
                                     <td><input type="text" id="goods_name" name="name"></td>
                                     <td><input type="text" id="goods_price" name="price"></td>
@@ -98,7 +98,7 @@
                 </tr>
                 {% for item in pagination.items %}
                     <tr>
-                        <td>{{ item.id }}</td>
+                        <td>{{ item.productid }}</td>
                         <td><img src="{{ item.productimg }}" style="width: 50px;height: 50px"></td>
                         <td>{{ item.productlongname }}</td>
                         <td>{{ item.price }}</td>
@@ -106,6 +106,7 @@
                         <td>
                             <input class="btn btn-warning " type="button" value="修改" onclick="filte_data({
                                     id:'{{ item.id }}',
+                                    productid:'{{ item.productid }}',
                                     productimg:'{{ item.productimg }}',
                                     productlongname:'{{ item.productlongname }}',
                                     price:'{{ item.price }}' ,
@@ -137,7 +138,7 @@
         });
 
         function filte_data(item) {
-            $("#goods_show_id").html(item.id);
+            $("#goods_show_id").val(item.productid);
             $("#goods_id").val(item.id);
             $("#goods_img").val(item.productimg);
             $("#goods_name").val(item.productlongname);
